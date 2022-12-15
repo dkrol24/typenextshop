@@ -2,8 +2,11 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {SearchIcon,ShoppingBagIcon,UserIcon} from "@heroicons/react/outline"; 
+import { selectBasketItems } from '../redux/basketSlice';
+import { useSelector } from 'react-redux';
 const Header = () => {
   const session = false;
+  const items = useSelector(selectBasketItems)
   return (
     <header style={{position:'sticky', top:'0',zIndex:'30',width:'100%',alignItems:'center',justifyContent:'space-between',display:'flex', background:'#e2d8dd'}}>
       <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
@@ -24,7 +27,7 @@ const Header = () => {
       <div style={{display:'flex',width:'120px',alignItems:'center',justifyContent:'space-evenly'}}>
         <div>
       <ShoppingBagIcon style={{height:'20px'}}/>
-      <div style={{position:'relative'}}><span style={{position:'absolute' ,right:'12px', top:'-11px', zIndex:'50',display:'flex', height:'15px',width:'15px', alignItems:'center',fontSize:'12px',justifyContent:'center', borderRadius:'50%', background:'yellow', color:'black'}}>5</span></div>
+      <div style={{position:'relative'}}><span style={{position:'absolute' ,right:'12px', top:'-11px', zIndex:'50',display:'flex', height:'15px',width:'15px', alignItems:'center',fontSize:'12px',justifyContent:'center', borderRadius:'50%', background:'yellow', color:'black'}}>{items.length}</span></div>
         </div>
         <Link href="/checkout">
       <SearchIcon style={{height:'20px'}}/>
