@@ -1,12 +1,17 @@
-import React from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import {SearchIcon,ShoppingBagIcon,UserIcon} from "@heroicons/react/outline"; 
-import { selectBasketItems } from '../redux/basketSlice';
-import { useSelector } from 'react-redux';
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import {
+  SearchIcon,
+  ShoppingBagIcon,
+  UserIcon,
+} from "@heroicons/react/outline";
+import { useSelector } from "react-redux";
+import { selectBasketItems } from "../redux/basketSlice";
+import { signIn, signOut, useSession } from "next-auth/react";
 const Header = () => {
-  const session = false;
-  const items = useSelector(selectBasketItems)
+  const { data: session } = useSession();
+  const items = useSelector(selectBasketItems);
   return (
     <header style={{position:'sticky', top:'0',zIndex:'30',width:'100%',alignItems:'center',justifyContent:'space-between',display:'flex', background:'#e2d8dd'}}>
       <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
@@ -32,14 +37,21 @@ const Header = () => {
         <Link href="/checkout">
       <SearchIcon style={{height:'20px'}}/>
         </Link>
-        {!session ? (
-          <Image alt='profileicon' src="https://www.w3schools.com/howto/img_avatar.png" width={20} height={20} 
-          //onClick={()=>signOut()} 
+        {session ? (
+          <Image
+            src={
+              session.user?.image ||
+              "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+            }
+            alt=""
+            className="cursor-pointer rounded-full"
+            width={34}
+            height={34}
+            onClick={() => signOut()}
           />
-
-        ): ( <UserIcon style={{height:'20px'}} 
-        //onClick={()=>signIn()} 
-        />)}
+        ) : (
+          <UserIcon className="headerIcon" onClick={() => signIn()} />
+        )}
       </div>
     </header>
   )

@@ -1,18 +1,21 @@
 import { Tab } from "@headlessui/react";
 import type { GetServerSideProps } from "next";
-import Head from 'next/head'
+import Head from "next/head";
 import Basket from "../components/Basket";
-import Header from '../components/Header'
-import Landing from '../components/Landing'
+import Header from "../components/Header";
+import Landing from "../components/Landing";
 import Product from "../components/Product";
-import { fetchCategories } from './utils/fetchCategories';
-import { fetchProducts } from './utils/fetchProducts';
+
+import { getSession } from "next-auth/react";
+import type { Session } from "next-auth";
+import { fetchCategories } from "./utils/fetchCategories";
+import { fetchProducts } from "./utils/fetchProducts";
 
 interface Props {
   categories: Category[];
   products: Product[];
+  session: Session | null;
 }
-
 
 const Home = ({ categories, products }: Props) => {
   console.log(products);
@@ -24,21 +27,27 @@ const Home = ({ categories, products }: Props) => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="">
       <Head>
-        <title>Create Next App</title>
+        <title>Apple Redesign</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-    <Header/>
-    <Basket/>
-    <main style={{position:'relative',height:'200vh', background:'#ffe9e9'}}>
-      <Landing/>
-    </main>
-    <section style={{position:'relative',zIndex:'40',minHeight:'100vh',background:'red'}}>
-      <div>
-      <h1>New Promos</h1>
-      <Tab.Group>
-             <Tab.List className="flex justify-center">
+
+      <Header />
+
+      <Basket />
+
+      <main className="relative h-[200vh] bg-[#E7ECEE]">
+        <Landing />
+      </main>
+      <section className="relative z-40 -mt-[100vh] min-h-screen bg-[#1B1B1B]">
+        <div className="space-y-10 py-16">
+          <h1 className="text-center text-4xl font-medium tracking-wide text-white md:text-5xl">
+            New Promos
+          </h1>
+
+          <Tab.Group>
+            <Tab.List className="flex justify-center">
               {categories.map((category) => (
                 <Tab
                   key={category._id}
@@ -54,7 +63,7 @@ const Home = ({ categories, products }: Props) => {
                   {category.title}
                 </Tab>
               ))}
-            </Tab.List> 
+            </Tab.List>
             <Tab.Panels className="mx-auto max-w-fit pt-10 pb-24 sm:px-4">
               <Tab.Panel className="tabPanel">{showProducts(0)}</Tab.Panel>
               <Tab.Panel className="tabPanel">{showProducts(1)}</Tab.Panel>
@@ -62,23 +71,27 @@ const Home = ({ categories, products }: Props) => {
               <Tab.Panel className="tabPanel">{showProducts(3)}</Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
-      </div>
-    </section>
+        </div>
+      </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
 
-
-export const getServerSideProps: GetServerSideProps = async () => {
+// Backend Code
+export const getServerSideProps: GetServerSideProps = async (
+  context
+) => {
   const categories = await fetchCategories();
   const products = await fetchProducts();
+  const session = await getSession(context);
 
-  return{
-    props:{
+  return {
+    props: {
       categories,
       products,
+      session,
     },
-  }
-}
+  };
+};
